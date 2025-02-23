@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
 import { addBook, deleteaBook, fetchBooks } from "../../redux/slices/bookSlice";
 import { RootState } from "../../redux/store";
 import "./Books.css";
 
-
 const BookComponent = () => {
+    const navigate = useNavigate();
+
     const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState("");
     const { books, error, status } = useSelector((state: RootState) => state.book);
@@ -34,22 +36,28 @@ const BookComponent = () => {
             coverImage: "",
             author: "",
             genre: "",
+            bookContent: "",
+            yearOfPublication: ""
         }
     );
     const [showForm, setShowForm] = useState(false);
 
 
     
-
+    const handleReadBook = (_id: string) => {
+        navigate(`/${_id}`);
+    }
     const handleAddBook = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newBook.title || !newBook.description || !newBook.coverImage || !newBook.author || !newBook.genre) {
+        if (!newBook.title || !newBook.description || !newBook.coverImage || !newBook.author || !newBook.genre || !newBook.bookContent || !newBook.yearOfPublication) {
             const missingFields = [];
             if (!newBook.title) missingFields.push("Title");
             if (!newBook.description) missingFields.push("Description");
             if (!newBook.coverImage) missingFields.push("Cover Image");
             if (!newBook.author) missingFields.push("Author");
             if (!newBook.genre) missingFields.push("Genre");
+            if (!newBook.bookContent) missingFields.push("Book Content");
+            if (!newBook.yearOfPublication) missingFields.push("Year of Publication");
             console.log(missingFields);
             setErrorMessage(`Please fill in the following fields: ${missingFields.join(", ")}`);
             return;
@@ -102,6 +110,7 @@ const BookComponent = () => {
         if(filterBy === "title" && book.title.toLowerCase().includes(query)) return true;
         if(filterBy === "author" && book.author.toLowerCase().includes(query)) return true;
         if(filterBy === "genre" && book.genre.toLowerCase().includes(query)) return true;
+        if(filterBy === "yearOfPublication" && book.yearOfPublication.toLowerCase().includes(query)) return true;
         return false;}
     );
 
@@ -143,10 +152,12 @@ const BookComponent = () => {
             {expandedBook && <div className="overlay" onClick={handleOverlayClick}></div>}
             {error && <p className="error">{error}</p>}
             <div className="search-container">
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value as "id" | "title" | "author")}>
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value as "id" | "title" | "author" )}>
                     <option value="id">ID</option>
                     <option value="title">Title</option>
                     <option value="author">Author</option>
+                    <option value="genre">Genre</option>
+                    <option value="yearOfPublication">Year of Publication</option>
                 </select>
                 <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}>
                     <option value="asc">Ascending</option>
@@ -154,7 +165,7 @@ const BookComponent = () => {
                 </select>
                 <input
                     type="text"
-                    placeholder="Search by ID, Title, Author, Genre"
+                    placeholder="Search by ID, Title, Author, Genre, or Year of Publication"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -163,6 +174,7 @@ const BookComponent = () => {
                     <option value="title">Title</option>
                     <option value="author">Author</option>
                     <option value="genre">Genre</option>
+                    <option value="yearOfPublication">Year</option>
                 </select>
                 
             </div>
@@ -189,7 +201,7 @@ const BookComponent = () => {
 
                 </div>
                 <div className="input-group">
-                    <label htmlFor="coverImage">Cover Image:</label>
+                    <label htmlFor="coverImage">Cover Image URL:</label>
                     <input type="text" id="coverImage" value={newBook.coverImage} onChange={(e) => setNewBook({ ...newBook, coverImage: e.target.value })} 
                     placeholder="Enter the cover image URL of the book"/>
 
@@ -204,6 +216,18 @@ const BookComponent = () => {
                     <label htmlFor="genre">Genre:</label>
                     <input type="text" id="genre" value={newBook.genre} onChange={(e) => setNewBook({ ...newBook, genre: e.target.value })} 
                     placeholder="Enter the genre of the book"/>
+
+                </div>
+                <div className="input-group">
+                    <label htmlFor="yearOfPublication">Year of Publication:</label>
+                    <input type="number" id="yearOfPublication" value={newBook.yearOfPublication} onChange={(e) => setNewBook({ ...newBook, yearOfPublication: e.target.value })} 
+                    placeholder="Enter the year of publication of the book"/>
+
+                </div>
+                <div className="input-group">
+                    <label htmlFor="bookContent">Book Content:</label>
+                    <input type="text" id="bookContent" value={newBook.bookContent} onChange={(e) => setNewBook({ ...newBook, bookContent: e.target.value })} 
+                    placeholder="Enter the content of the book"/>
 
                 </div>
                 {errorMessage && <p className="error">{errorMessage}</p>}
@@ -247,7 +271,8 @@ const BookComponent = () => {
                                 )}
                             </p>
 
-                            <button className="delete-button1" onClick={() => handleDeleteBook(book._id)}>Delete</button>
+                            <div className="book-buttons"><button className="delete-button1" onClick={() => handleDeleteBook(book._id)}>Delete</button>
+                            <button className="read-button" onClick={() => handleReadBook(book._id)}>Read the Book</button></div>
                         </li>
                     ))
                 ) : (

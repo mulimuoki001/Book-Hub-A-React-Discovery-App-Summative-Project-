@@ -1,8 +1,8 @@
 import { Route, Routes } from 'react-router-dom';
-import Login from '../components/UserAuthentication/login';
-import Register from '../components/UserAuthentication/register';
+import SingleBook from '../components/BooksManagement/singleBook';
 import Dashboard from '../components/dashboard/dashboard';
-import ProtectedRoute from './protectedRoute';
+import Login, { ProtectedRoute } from '../components/UserAuthentication/login';
+import Register from '../components/UserAuthentication/register';
 
 
 const AppRouter = () => {
@@ -13,9 +13,12 @@ const AppRouter = () => {
                 <Route path="/register" element={<Register />} />
                 {/*Protected Routes*/}
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/" element={<Dashboard />} />
                 </Route>
-            </Routes>
+                <Route path="/:id" element=   {<SingleBook />} />
+
+                </Routes>
+        
     )
 }
 

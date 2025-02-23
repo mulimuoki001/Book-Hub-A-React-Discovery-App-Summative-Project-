@@ -8,6 +8,8 @@ interface Book {
     coverImage: string,
     author: string,
     genre: string,
+    bookContent: string,
+    yearOfPublication: string,
     status: string
 }
 
@@ -29,9 +31,9 @@ export const fetchBooks = createAsyncThunk('book/fetchBooks', async () => {
     const books = response.data;
     return books
 });
-export const addBook = createAsyncThunk('book/addBook', async ({title, description, coverImage, author, genre}: {title: string, description: string, coverImage: string, author: string, genre: string}, {rejectWithValue}) => {
+export const addBook = createAsyncThunk('book/addBook', async ({title, description, coverImage, author, genre, bookContent, yearOfPublication}: {title: string, description: string, coverImage: string, author: string, genre: string, bookContent: string, yearOfPublication: string}, {rejectWithValue}) => {
     try{
-        const response = await axios.post('http://localhost:5000/api/books', {title, description, coverImage, author, genre});
+        const response = await axios.post('http://localhost:5000/api/books', {title, description, coverImage, author, genre, bookContent, yearOfPublication});
         const book = response.data;
 
         return book;

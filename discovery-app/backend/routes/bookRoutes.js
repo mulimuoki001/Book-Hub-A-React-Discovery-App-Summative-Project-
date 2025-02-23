@@ -1,11 +1,11 @@
 const express = require('express');
 const Book = require('../models/Book');
-const authMiddleware = require('../middleware/authMiddleware');
+// const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 //Get all books
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const books = await Book.find();
         res.status(200).json(books);
@@ -16,7 +16,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 //Get book by id
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id',  async (req, res) => {
     try {
         const book = await Book.findById(req.params.id);
         if (!book) {
@@ -30,13 +30,13 @@ router.get('/:id', authMiddleware, async (req, res) => {
 });
 
 //Create a new book
-router.post('/',  authMiddleware, async (req, res) => {
+router.post('/',  async (req, res) => {
     try {
-        const { title, description, coverImage, author, genre } = req.body;
-        if(!title || !description || !coverImage || !author || !genre){
+        const { title, description, coverImage, author, genre, bookContent, yearOfPublication } = req.body;
+        if(!title || !description || !coverImage || !author || !genre || !bookContent || !yearOfPublication){
             return res.status(400).json({ message: 'All fields are required' });
         }
-        const book = new Book({ title, description, coverImage, author, genre });
+        const book = new Book({ title, description, coverImage, author, genre, bookContent, yearOfPublication });
         await book.save();
         res.status(201).json(book);
     } catch (error) {
@@ -67,7 +67,7 @@ router.put('/:id',  async (req, res) => {
 });
 
 //Delete a book
-router.delete('/:id',  authMiddleware, async (req, res) => {
+router.delete('/:id',   async (req, res) => {
     try {
         const book = await Book.findById(req.params.id);
         if (!book) {
@@ -83,7 +83,7 @@ router.delete('/:id',  authMiddleware, async (req, res) => {
 
 
 //Create multiple books
-router.post('/bulk', authMiddleware, async (req, res) => {
+router.post('/bulk', async (req, res) => {
     try {
         const booksData = req.body; // Expecting an array of books in the request body
         
@@ -95,11 +95,11 @@ router.post('/bulk', authMiddleware, async (req, res) => {
         // Loop through the array and create each book
         const books = [];
         for (const bookData of booksData) {
-            const { title, description, coverImage, author, genre } = bookData;
-            if (!title || !description || !coverImage || !author || !genre) {
+            const { title, description, coverImage, author, genre, bookContent, yearOfPublication } = bookData;
+            if (!title || !description || !coverImage || !author || !genre || !bookContent || !yearOfPublication) {
                 return res.status(400).json({ message: 'All fields are required for each book' });
             }
-            const book = new Book({ title, description, coverImage, author, genre });
+            const book = new Book({ title, description, coverImage, author, genre, bookContent, yearOfPublication });
             await book.save();
             books.push(book);
         }

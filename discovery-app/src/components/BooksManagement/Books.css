@@ -208,7 +208,23 @@
   background-color: #f62323;
   box-shadow: 10px #d7cfcf;
 }
+.read-button {
+  padding: 5px 10px;
 
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+.read-button:hover {
+  background-color: #239bf6;
+  box-shadow: 10px #0d3e97;
+}
+.book-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
 .error {
   color: red;
   text-align: center;

@@ -65,9 +65,9 @@ router.post('/login', async (req, res) => {
         }else if(alreadyLoggedIn){
             return res.status(400).json({ message: 'User already logged in' });
         }else{
-            const token = jwt.sign({ id: user._id }, JWT_SECRET);
+            const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
             req.session.user = user;
-            res.cookie('token', token, { httpOnly: true, secure: true});
+            res.cookie('session', token, { httpOnly: true, secure: true, maxAge: 3600000 });
             res.header('Authorization', `Bearer ${token}`);
             res.status(200).json({ message: 'Login successful'});
         }
@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
 router.post('/logout', (req, res) => {
     if(req.session.user){
         req.session.destroy();
-        res.clearCookie('token');
+        res.clearCookie('session', { httpOnly: true, secure: true });
         res.status(200).json({ message: 'Logout successful' });
     }else{
         res.status(400).json({ message: 'User not logged in' });
